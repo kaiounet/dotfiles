@@ -57,7 +57,7 @@ section_header "Installing JetBrains Toolbox..."
 
 JETBRAINS_DIR="/opt/jetbrains"
 
-if [ -d "$JETBRAINS_DIR" ] && [ -f "$JETBRAINS_DIR/jetbrains-toolbox" ]; then
+if [ -x "$JETBRAINS_DIR/bin/jetbrains-toolbox" ] || cmd_exists jetbrains-toolbox; then
     info "JetBrains Toolbox is already installed"
 else
     step "Downloading JetBrains Toolbox..."
