@@ -28,11 +28,7 @@ CONDA_PACKAGES=(
     ipykernel
 )
 
-PYTORCH_PACKAGES=(
-    pytorch::torch
-    pytorch::torchvision
-    pytorch::torchaudio
-)
+
 
 # Packages installed via pip (more flexible versioning, avoids solver conflicts)
 PIP_PACKAGES=(
@@ -78,16 +74,17 @@ step "Activating '$ENV_NAME'"
 # shellcheck disable=SC1091
 source "$CONDA_ROOT/bin/activate" "$ENV_NAME"
 
-# Check if PyTorch is already installed
+step "Upgrading pip and installing pip packages"
+pip install --upgrade pip setuptools wheel
+
+# Install PyTorch via pip (better compatibility with VMs and various CPU architectures)
 if python -c "import torch" 2>/dev/null; then
     info "PyTorch already installed"
 else
-    step "Installing PyTorch stack"
-    "$CONDA_BIN" install -y -c pytorch -c nvidia "${PYTORCH_PACKAGES[@]}"
+    step "Installing PyTorch stack via pip"
+    pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
 fi
 
-step "Upgrading pip and installing pip packages"
-pip install --upgrade pip setuptools wheel
 pip install "${PIP_PACKAGES[@]}"
 
 step "Registering IPython kernel"
