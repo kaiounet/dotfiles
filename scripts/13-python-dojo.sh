@@ -14,7 +14,8 @@ ENVS_DIR="$CONDA_ROOT/envs"
 MANIFEST_DIR="$HOME/.config/dotfiles/envs"
 MANIFEST_FILE="$MANIFEST_DIR/dojo-requirements.txt"
 
-BASE_PACKAGES=(
+# Core packages installed via conda (benefit from binary builds)
+CONDA_PACKAGES=(
     "python=3.11"
     numpy
     pandas
@@ -25,15 +26,6 @@ BASE_PACKAGES=(
     jupyterlab
     notebook
     ipykernel
-    black
-    flake8
-    mypy
-    poetry
-    fastapi
-    pydantic
-    uvicorn
-    openai
-    langchain
 )
 
 PYTORCH_CHANNELS=(
@@ -47,13 +39,25 @@ PYTORCH_PACKAGES=(
     torchaudio
 )
 
-PIP_EXTRAS=(
+# Packages installed via pip (more flexible versioning, avoids solver conflicts)
+PIP_PACKAGES=(
+    black
+    flake8
+    mypy
+    poetry
+    fastapi
+    pydantic
+    "pydantic-settings"
+    uvicorn
+    openai
+    langchain
+    langchain-community
+    langsmith
     "jupyterlab-lsp"
     "python-lsp-server[all]"
     rich
     httpx
     aiohttp
-    "pydantic-settings"
     "rich-argparse"
 )
 
@@ -70,9 +74,9 @@ if "$CONDA_BIN" env list | awk '{print $1}' | grep -qx "$ENV_NAME"; then
     info "Conda environment '$ENV_NAME' already exists"
 else
     step "Creating conda environment '$ENV_NAME'"
-    "$CONDA_BIN" tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
-    "$CONDA_BIN" tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
-    "$CONDA_BIN" create -y -n "$ENV_NAME" "${BASE_PACKAGES[@]}"
+    "$CONDA_BIN" tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main 2>/dev/null || true
+    "$CONDA_BIN" tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r 2>/dev/null || true
+    "$CONDA_BIN" create -y -n "$ENV_NAME" "${CONDA_PACKAGES[@]}"
 fi
 
 step "Activating '$ENV_NAME'"
@@ -81,15 +85,15 @@ source "$CONDA_ROOT/bin/activate" "$ENV_NAME"
 
 step "Adding additional channels for PyTorch"
 for channel in "${PYTORCH_CHANNELS[@]}"; do
-    "$CONDA_BIN" config --env --add channels "$channel"
+    "$CONDA_BIN" config --env --add channels "$channel" 2>/dev/null || true
 done
 
 step "Installing PyTorch stack"
 "$CONDA_BIN" install -y "${PYTORCH_PACKAGES[@]}"
 
-step "Installing pip extras"
-pip install --upgrade pip setuptools
-pip install "${PIP_EXTRAS[@]}"
+step "Upgrading pip and installing pip packages"
+pip install --upgrade pip setuptools wheel
+pip install "${PIP_PACKAGES[@]}"
 
 step "Registering IPython kernel"
 python -m ipykernel install --user --name "$ENV_NAME" --display-name "Dojo (Python)"
