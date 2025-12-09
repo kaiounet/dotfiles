@@ -70,6 +70,8 @@ if "$CONDA_BIN" env list | awk '{print $1}' | grep -qx "$ENV_NAME"; then
     info "Conda environment '$ENV_NAME' already exists"
 else
     step "Creating conda environment '$ENV_NAME'"
+    "$CONDA_BIN" tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
+    "$CONDA_BIN" tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
     "$CONDA_BIN" create -y -n "$ENV_NAME" "${BASE_PACKAGES[@]}"
 fi
 
