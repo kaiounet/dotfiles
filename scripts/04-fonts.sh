@@ -19,7 +19,8 @@ FONT_DIR="$HOME/.local/share/fonts"
 mkdir -p "$FONT_DIR"
 
 # Check for Nerd Fonts with robust detection
-if find "$FONT_DIR" -maxdepth 1 -name "*NerdFont*" -o -name "*Nerd Font*" 2>/dev/null | grep -q .; then
+# Look for JetBrainsMono Nerd Font files (e.g., JetBrainsMonoNerdFont-Regular.ttf)
+if find "$FONT_DIR" -maxdepth 1 \( -name "*NerdFont*.ttf" -o -name "*NerdFont*.otf" \) 2>/dev/null | grep -q .; then
     info "Nerd Fonts detected in $FONT_DIR. Skipping download."
 else
     step "Downloading JetBrains Mono Nerd Font..."
