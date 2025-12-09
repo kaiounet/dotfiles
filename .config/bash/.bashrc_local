@@ -7,7 +7,7 @@
 if [ -n "${DOTFILES_BASHRC_LOCAL_LOADED:-}" ]; then
   return
 fi
-export DOTFILES_BASHRC_LOCAL_LOADED=1
+DOTFILES_BASHRC_LOCAL_LOADED=1
 
 # -------------------------
 # Basic environment
