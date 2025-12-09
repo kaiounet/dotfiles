@@ -40,7 +40,7 @@ else
     if [ ! -f "$LIBREWOLF_REPO" ]; then
         step "Adding LibreWolf repository..."
         # Download repo file directly (works on all Fedora versions)
-        sudo curl -fsSL -o "$LIBREWOLF_REPO" https://rpm.librewolf.net/librewolf-repo.repo
+        sudo curl -fsSL -o "$LIBREWOLF_REPO" https://rpm.librewolf.net/librewolf.repo
     fi
 
     step "Installing LibreWolf..."
