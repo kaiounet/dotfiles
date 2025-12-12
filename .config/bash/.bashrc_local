@@ -225,6 +225,11 @@ gcb() {
   git checkout -b "$1" 2>/dev/null || git checkout "$1"
 }
 
+# Create useful .gitignore files for your project
+gi() {
+    curl -sL https://www.toptal.com/developers/gitignore/api/$@ ;
+}
+
 # -------------------------
 # Misc
 # -------------------------
